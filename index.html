@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gunveen Kaur — Clinical Psychology & People Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FDFAF5;
+    --ink: #1A1410;
+    --muted: #6B5E52;
+    --sage: #7C9E8A;
+    --terracotta: #C4714A;
+    --gold: #C9A84C;
+    --blush: #E8C4B8;
+    --deep: #2C1A0E;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── CURSOR ── */
+  body { cursor: none; }
+  #cursor {
+    width: 10px; height: 10px;
+    background: var(--terracotta);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, width 0.2s, height 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--terracotta);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.4s ease, left 0.12s ease, top 0.12s ease;
+    opacity: 0.6;
+  }
+  a:hover ~ #cursor, button:hover ~ #cursor { transform: translate(-50%,-50%) scale(2.5); }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.35;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    padding: 1.5rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(245,240,232,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(26,20,16,0.08);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--terracotta); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 6rem 3rem 6rem 6rem;
+    position: relative; z-index: 1;
+  }
+  .hero-tag {
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--terracotta); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-tag::before {
+    content: ''; width: 30px; height: 1px; background: var(--terracotta);
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    color: var(--deep);
+  }
+  h1 em { font-style: italic; color: var(--terracotta); }
+  .hero-desc {
+    font-size: 1rem; line-height: 1.75; color: var(--muted);
+    max-width: 440px; margin-bottom: 3rem;
+  }
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: none;
+    text-decoration: none;
+    transition: background 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--terracotta); transform: translateY(-2px); }
+  .btn-outline {
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: none;
+    text-decoration: none;
+    transition: all 0.25s;
+    display: inline-block;
+  }
+  .btn-outline:hover { background: var(--ink); color: var(--cream); transform: translateY(-2px); }
+
+  .hero-right {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-visual {
+    width: 100%; height: 100%;
+    position: relative;
+    background: var(--deep);
+    clip-path: polygon(8% 0%, 100% 0%, 100% 100%, 0% 100%);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-visual::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(196,113,74,0.3) 0%, transparent 50%, rgba(124,158,138,0.2) 100%);
+  }
+  .hero-monogram {
+    font-family: 'Playfair Display', serif;
+    font-size: 18vw;
+    font-weight: 900;
+    color: rgba(245,240,232,0.06);
+    position: absolute;
+    user-select: none;
+    line-height: 1;
+  }
+  .hero-stats {
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(245,240,232,0.1);
+  }
+  .stat-card {
+    background: rgba(245,240,232,0.05);
+    backdrop-filter: blur(4px);
+    padding: 2rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--cream);
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.5);
+    margin-top: 0.3rem;
+    display: block;
+  }
+
+  /* ── SCROLLING TICKER ── */
+  .ticker-wrap {
+    overflow: hidden;
+    background: var(--terracotta);
+    padding: 0.9rem 0;
+  }
+  .ticker {
+    display: flex;
+    animation: ticker 20s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--cream); padding: 0 3rem;
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+  .ticker-item::after { content: '✦'; color: rgba(245,240,232,0.5); }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── SECTIONS ── */
+  section { padding: 7rem 6rem; }
+  .section-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--sage); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--sage); opacity: 0.4; max-width: 60px; }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    font-weight: 700; line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--deep); margin-bottom: 1rem;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--warm-white);
+    display: grid; grid-template-columns: 1.2fr 1fr;
+    gap: 6rem; align-items: center;
+  }
+  .about-text p { font-size: 1.05rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.5rem; }
+  .about-text p strong { color: var(--ink); font-weight: 500; }
+  .about-aside {
+    border-left: 3px solid var(--terracotta);
+    padding-left: 2rem;
+  }
+  .aside-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-style: italic; line-height: 1.5;
+    color: var(--deep); margin-bottom: 2rem;
+  }
+  .contact-list { list-style: none; }
+  .contact-list li {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.85rem; color: var(--muted);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(26,20,16,0.06);
+  }
+  .contact-list li:last-child { border-bottom: none; }
+  .contact-icon { font-size: 1rem; width: 20px; }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: var(--cream); }
+  .exp-grid { margin-top: 3rem; }
+  .exp-item {
+    display: grid; grid-template-columns: 180px 1fr;
+    gap: 3rem; padding: 2.5rem 0;
+    border-bottom: 1px solid rgba(26,20,16,0.08);
+    transition: all 0.3s;
+    position: relative;
+  }
+  .exp-item::before {
+    content: '';
+    position: absolute; left: -2rem; top: 0; bottom: 0;
+    width: 3px; background: var(--terracotta);
+    transform: scaleY(0); transform-origin: top;
+    transition: transform 0.3s;
+  }
+  .exp-item:hover::before { transform: scaleY(1); }
+  .exp-item:hover { padding-left: 1rem; }
+  .exp-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; color: var(--muted);
+    letter-spacing: 0.05em;
+    padding-top: 0.25rem;
+  }
+  .exp-role {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--deep); margin-bottom: 0.25rem;
+  }
+  .exp-org {
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--terracotta); margin-bottom: 1rem;
+  }
+  .exp-bullets { list-style: none; }
+  .exp-bullets li {
+    font-size: 0.9rem; line-height: 1.7; color: var(--muted);
+    padding: 0.3rem 0; padding-left: 1.2rem; position: relative;
+  }
+  .exp-bullets li::before {
+    content: '—'; position: absolute; left: 0;
+    color: var(--sage);
+  }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--deep); color: var(--cream); }
+  #skills .section-label { color: var(--gold); }
+  #skills h2 { color: var(--cream); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem; margin-top: 3rem;
+  }
+  .skill-card {
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.1);
+    padding: 2rem;
+    transition: all 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--terracotta), var(--gold));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.35s;
+  }
+  .skill-card:hover::before { transform: scaleX(1); }
+  .skill-card:hover { background: rgba(245,240,232,0.07); transform: translateY(-3px); }
+  .skill-cat {
+    font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .skill-tag {
+    font-size: 0.78rem; padding: 0.3rem 0.75rem;
+    background: rgba(245,240,232,0.06);
+    border: 1px solid rgba(245,240,232,0.12);
+    color: rgba(245,240,232,0.75);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .skill-tag:hover { background: var(--terracotta); border-color: var(--terracotta); color: var(--cream); }
+
+  /* ── EDUCATION ── */
+  #education { background: var(--warm-white); }
+  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+  .edu-card {
+    background: var(--cream);
+    padding: 2.5rem;
+    border: 1px solid rgba(26,20,16,0.08);
+    position: relative; overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .edu-card:hover { transform: translateY(-4px); }
+  .edu-card::after {
+    content: attr(data-deg);
+    position: absolute; right: -1rem; bottom: -1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem; font-weight: 900;
+    color: rgba(26,20,16,0.04);
+    pointer-events: none; user-select: none;
+    line-height: 1;
+  }
+  .edu-degree {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; font-weight: 700;
+    color: var(--deep); margin-bottom: 0.4rem;
+  }
+  .edu-inst {
+    font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--terracotta); margin-bottom: 0.5rem;
+  }
+  .edu-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; color: var(--muted); margin-bottom: 1.5rem;
+  }
+  .edu-note { font-size: 0.88rem; line-height: 1.7; color: var(--muted); }
+  .edu-note strong { color: var(--ink); font-weight: 500; }
+
+  /* ── DISSERTATION ── */
+  #dissertation {
+    background: var(--terracotta);
+    padding: 5rem 6rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+  .diss-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(245,240,232,0.6); margin-bottom: 1rem; }
+  .diss-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+    font-style: italic; font-weight: 700;
+    color: var(--cream); line-height: 1.35;
+  }
+  .diss-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+  .diss-tag {
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid rgba(245,240,232,0.4);
+    color: rgba(245,240,232,0.8);
+    border-radius: 100px;
+  }
+  .diss-methods {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .method-box {
+    background: rgba(245,240,232,0.1);
+    border: 1px solid rgba(245,240,232,0.2);
+    padding: 1.25rem;
+    border-radius: 4px;
+  }
+  .method-name {
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(245,240,232,0.55); margin-bottom: 0.4rem;
+  }
+  .method-val { font-size: 0.95rem; color: var(--cream); font-weight: 500; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--deep);
+    color: var(--cream);
+    padding: 4rem 6rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+  }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a {
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(245,240,232,0.45); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--terracotta); }
+  .footer-copy { font-size: 0.72rem; color: rgba(245,240,232,0.25); margin-top: 0.5rem; }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: 60vw; }
+    .hero-visual { clip-path: none; }
+    .hero-left { padding: 4rem 2rem 3rem; }
+    section { padding: 5rem 2rem; }
+    #about { grid-template-columns: 1fr; gap: 3rem; }
+    .edu-grid { grid-template-columns: 1fr; }
+    #dissertation { grid-template-columns: 1fr; padding: 4rem 2rem; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 3rem 2rem; }
+    .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">GK</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="mailto:gunveenkaur292929@gmail.com">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left fade-up">
+    <div class="hero-tag">Clinical Psychology & People Analytics</div>
+    <h1>Gunveen<br><em>Kaur</em></h1>
+    <p class="hero-desc">
+      MSc Clinical Psychology candidate bridging behavioural science with
+      organisational strategy — translating human insights into data-driven
+      people solutions.
+    </p>
+    <div class="hero-cta">
+      <a href="#experience" class="btn-primary">View Experience</a>
+      <a href="mailto:gunveenkaur292929@gmail.com" class="btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="hero-monogram">GK</div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-num">6+</span>
+          <span class="stat-label">Internships</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">45</span>
+          <span class="stat-label">Research Sources</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">100+</span>
+          <span class="stat-label">Data Points Analysed</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">20+</span>
+          <span class="stat-label">Clinical Cases</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">Clinical Psychology</span>
+    <span class="ticker-item">People Analytics</span>
+    <span class="ticker-item">SPSS · JASP · PROCESS Macro</span>
+    <span class="ticker-item">ICD-10 Diagnostics</span>
+    <span class="ticker-item">Behavioural Research</span>
+    <span class="ticker-item">HR Strategy</span>
+    <span class="ticker-item">Emotion Regulation</span>
+    <span class="ticker-item">Organisational Health</span>
+    <span class="ticker-item">Clinical Psychology</span>
+    <span class="ticker-item">People Analytics</span>
+    <span class="ticker-item">SPSS · JASP · PROCESS Macro</span>
+    <span class="ticker-item">ICD-10 Diagnostics</span>
+    <span class="ticker-item">Behavioural Research</span>
+    <span class="ticker-item">HR Strategy</span>
+    <span class="ticker-item">Emotion Regulation</span>
+    <span class="ticker-item">Organisational Health</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text fade-up">
+    <div class="section-label">About Me</div>
+    <h2>Where Psychology Meets<br>Organisational Thinking</h2>
+    <p>
+      I'm a <strong>clinical psychology candidate</strong> with a distinctive ability to move fluidly across the clinical,
+      research, and people-analytics domains. My work sits at the intersection of human behaviour
+      and organisational health — a space where rigorous science creates real-world impact.
+    </p>
+    <p>
+      Through 6+ internships spanning hospital wards, AI startups, and HR firms, I've built both
+      <strong>technical fluency</strong> (SPSS, JASP, PROCESS Macro, regression modelling) and
+      <strong>relational intelligence</strong> — the ability to translate complex behavioural data into
+      language that moves people and shapes strategy.
+    </p>
+    <p>
+      My dissertation investigates digital empathy, resilience, and emotion regulation among
+      young adults — research with direct applications for employee wellbeing frameworks
+      and tech-human interaction design.
+    </p>
+    <a href="mailto:gunveenkaur292929@gmail.com" class="btn-primary" style="margin-top:1rem;">Say Hello</a>
+  </div>
+  <div class="about-aside fade-up">
+    <p class="aside-quote">"Translating behavioural insights into evidence-based people strategy."</p>
+    <ul class="contact-list">
+      <li><span class="contact-icon">📍</span> New Delhi, India</li>
+      <li><span class="contact-icon">📞</span> +91 8595654653</li>
+      <li><span class="contact-icon">✉️</span> gunveenkaur292929@gmail.com</li>
+      <li><span class="contact-icon">🎓</span> MSc Clinical Psychology, SGT University</li>
+      <li><span class="contact-icon">📅</span> Available from January 2026</li>
+    </ul>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Experience</div>
+  <h2>Six Internships.<br>One through-line.</h2>
+  <div class="exp-grid">
+
+    <div class="exp-item fade-up">
+      <div class="exp-date">Jul–Aug 2025</div>
+      <div>
+        <div class="exp-role">Clinical Psychology Intern</div>
+        <div class="exp-org">Aarunya Mental Health Centre, New Delhi</div>
+        <ul class="exp-bullets">
+          <li>Conducted structured clinical observations and case discussions for 15+ patients, synthesising findings to inform treatment planning.</li>
+          <li>Administered and scored standardised psychological assessments, contributing to diagnostic accuracy across a range of presentations.</li>
+          <li>Documented behavioural and affective patterns in patient records, supporting interdisciplinary team reviews.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item fade-up">
+      <div class="exp-date">Apr–Jun 2025</div>
+      <div>
+        <div class="exp-role">Technical Recruiter (Intern)</div>
+        <div class="exp-org">Perfect Talent Partner, Gurgaon</div>
+        <ul class="exp-bullets">
+          <li>Managed end-to-end recruitment for 10+ positions, sourcing and pipeline-managing 50+ candidates across technical and non-technical roles.</li>
+          <li>Applied behavioural screening techniques to assess candidate fit, reducing time-to-offer through structured interview coordination.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item fade-up">
+      <div class="exp-date">Oct 2024</div>
+      <div>
+        <div class="exp-role">HR & Business Development Intern</div>
+        <div class="exp-org">Hopes Capital / Meliora, Pune</div>
+        <ul class="exp-bullets">
+          <li>Aligned HR strategies with organisational goals across 5+ projects, ensuring policy compliance and contributing to business development targets.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item fade-up">
+      <div class="exp-date">Jul–Sep 2024</div>
+      <div>
+        <div class="exp-role">Human Resources Intern</div>
+        <div class="exp-org">Edgrasp.in, Lucknow</div>
+        <ul class="exp-bullets">
+          <li>Contributed to 4 HR projects involving data analysis, process documentation, and stakeholder communication, improving workflow efficiency.</li>
+          <li>Delivered cross-functional solutions in a fast-paced environment that supported team and organisational goals.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item fade-up">
+      <div class="exp-date">Sep 2024</div>
+      <div>
+        <div class="exp-role">Research Assistant</div>
+        <div class="exp-org">Gakudo AI, New Delhi</div>
+        <ul class="exp-bullets">
+          <li>Analysed behavioural data from 100+ data points to identify psychological patterns informing AI-driven product features and training datasets.</li>
+          <li>Designed and interpreted 3 psychological assessments, ensuring research validity and alignment with AI model development objectives.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item fade-up">
+      <div class="exp-date">Nov 2023–Jan 2024</div>
+      <div>
+        <div class="exp-role">Clinical Psychology Intern</div>
+        <div class="exp-org">Moolchand & VIMHANS Hospital, New Delhi</div>
+        <ul class="exp-bullets">
+          <li>Prepared comprehensive case histories and assigned ICD-10 diagnostic codes for 20+ patients across live clinical settings.</li>
+          <li>Conducted direct patient observation to support naturalistic clinical assessment and multidisciplinary diagnostic processes.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">Competencies</div>
+  <h2>The toolkit behind<br>the thinking.</h2>
+  <div class="skills-grid">
+    <div class="skill-card fade-up">
+      <div class="skill-cat">Analytics</div>
+      <div class="skill-tags">
+        <span class="skill-tag">SPSS</span>
+        <span class="skill-tag">JASP</span>
+        <span class="skill-tag">PROCESS Macro</span>
+        <span class="skill-tag">Mediation Analysis</span>
+        <span class="skill-tag">Regression Modelling</span>
+        <span class="skill-tag">SEM</span>
+        <span class="skill-tag">Excel Pivot Tables</span>
+        <span class="skill-tag">Data Interpretation</span>
+      </div>
+    </div>
+    <div class="skill-card fade-up">
+      <div class="skill-cat">People Analytics & HR</div>
+      <div class="skill-tags">
+        <span class="skill-tag">HR Analytics</span>
+        <span class="skill-tag">Workforce Insights</span>
+        <span class="skill-tag">Employee Engagement</span>
+        <span class="skill-tag">Survey Design</span>
+        <span class="skill-tag">Org Health Metrics</span>
+        <span class="skill-tag">Behavioural Screening</span>
+      </div>
+    </div>
+    <div class="skill-card fade-up">
+      <div class="skill-cat">Clinical & Research</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Psychological Assessment</span>
+        <span class="skill-tag">ICD-10 Coding</span>
+        <span class="skill-tag">Case History</span>
+        <span class="skill-tag">Behavioural Research</span>
+        <span class="skill-tag">Report Writing</span>
+        <span class="skill-tag">Clinical Observation</span>
+      </div>
+    </div>
+    <div class="skill-card fade-up">
+      <div class="skill-cat">Soft Skills</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Stakeholder Communication</span>
+        <span class="skill-tag">Emotional Intelligence</span>
+        <span class="skill-tag">Adaptability</span>
+        <span class="skill-tag">Cross-functional Collaboration</span>
+        <span class="skill-tag">Leadership</span>
+        <span class="skill-tag">Research Society MD</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label">Education</div>
+  <h2>Built on rigorous<br>foundations.</h2>
+  <div class="edu-grid">
+    <div class="edu-card fade-up" data-deg="MSc">
+      <div class="edu-degree">MSc Clinical Psychology</div>
+      <div class="edu-inst">SGT University, Gurgaon</div>
+      <div class="edu-year">Aug 2024 – Jul 2026 (Expected)</div>
+      <div class="edu-note">
+        Dissertation focused on <strong>digital empathy, emotion regulation, and resilience</strong>
+        among young adults. Applied SPSS, JASP, and PROCESS Macro for mediation
+        analysis across 45 peer-reviewed sources; conducted SEM and regression modelling.
+      </div>
+    </div>
+    <div class="edu-card fade-up" data-deg="BA">
+      <div class="edu-degree">BA (Hons) Psychology</div>
+      <div class="edu-inst">Manipal University Jaipur</div>
+      <div class="edu-year">Apr 2020 – May 2023</div>
+      <div class="edu-note">
+        Served as <strong>Managing Director of PHI Phenomenon</strong> — the university's
+        research society. Led research initiatives, managed a student team, and
+        organised academic events and cross-disciplinary projects.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISSERTATION SPOTLIGHT -->
+<section id="dissertation">
+  <div>
+    <div class="diss-label">Dissertation Research</div>
+    <div class="diss-title">
+      "Digital Empathy as a Predictor of Resilience among Young Adults Exposed to Cyberbullying — Mediating Role of Emotion Regulation"
+    </div>
+    <div class="diss-tags">
+      <span class="diss-tag">Digital Wellbeing</span>
+      <span class="diss-tag">Resilience</span>
+      <span class="diss-tag">Emotion Regulation</span>
+      <span class="diss-tag">Cyberbullying</span>
+      <span class="diss-tag">Mediation Analysis</span>
+    </div>
+  </div>
+  <div class="diss-methods">
+    <div class="method-box">
+      <div class="method-name">Methodology</div>
+      <div class="method-val">SEM & Regression</div>
+    </div>
+    <div class="method-box">
+      <div class="method-name">Tools</div>
+      <div class="method-val">SPSS · JASP · PROCESS Macro</div>
+    </div>
+    <div class="method-box">
+      <div class="method-name">Sources</div>
+      <div class="method-val">45 Peer-reviewed</div>
+    </div>
+    <div class="method-box">
+      <div class="method-name">Application</div>
+      <div class="method-val">Employee Wellbeing Frameworks</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-name">Gunveen Kaur</div>
+    <div class="footer-copy">© 2025 · New Delhi, India</div>
+  </div>
+  <div class="footer-links">
+    <a href="mailto:gunveenkaur292929@gmail.com">Email</a>
+    <a href="tel:+918595654653">Phone</a>
+    <a href="#hero">Back to Top</a>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2.5)'; ring.style.opacity = '0'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.opacity = '0.6'; });
+  });
+
+  // Scroll fade-in
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
